@@ -1,6 +1,6 @@
-package com.example.entity;
+package com.example.demo.entity;
 
-import com.example.entity.enums.ERole;
+import com.example.demo.entity.enums.ERole;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,6 +12,7 @@ import java.util.*;
 
 @Data
 @Entity
+@Table(name="\"User\"")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,10 +34,11 @@ public class User {
 
     @ElementCollection(targetClass = ERole.class)
     @CollectionTable(name = "user_role",
-            joinColumns = @JoinColumn("user_id"))
+            joinColumns = @JoinColumn(name = "user_id"))
     // https://javarush.ru/groups/posts/2147-hashset-v-java
     private Set<ERole> role = new HashSet<>();
     // Каскадная модель one to many - к одному посту один пользователь, к одному пользователю много постов.
+    //https://vladmihalcea.com/orphanremoval-jpa-hibernate/
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
     private List<Post> posts = new ArrayList<>();
 
@@ -48,7 +50,6 @@ public class User {
     private Collection<? extends GrantedAuthority> authorities;
 
     public User(){
-
     }
     // @PrePersist — аннотация используется для указания метода обратного вызова,
     // который срабатывает до того, как объект будет сохранен.
